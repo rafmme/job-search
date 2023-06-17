@@ -5,6 +5,7 @@ import (
 	_ "github.com/opensaucerer/barf"
 	_ "github.com/opensaucerer/goaxios"
 	"github.com/rafmme/job-search/api"
+	_ "github.com/serpapi/google-search-results-golang"
 	_ "github.com/xhit/go-simple-mail/v2"
 	_ "gopkg.in/robfig/cron.v2"
 )
