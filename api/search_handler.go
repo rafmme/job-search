@@ -21,8 +21,11 @@ func SearchJobs(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	result := data.CreateJobSearchQuery().Execute().FormatJobList()
+
 	barf.Response(w).Status(http.StatusOK).JSON(barf.Res{
-		Status: true,
-		Data:   map[string]interface{}{"body": data},
+		Status:  true,
+		Message: "Job Search Results",
+		Data:    result,
 	})
 }
