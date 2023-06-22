@@ -4,11 +4,33 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
+	"github.com/opensaucerer/goaxios"
 	mail "github.com/xhit/go-simple-mail/v2"
 )
 
-func SendEmail(to, title, content string) {
+func SendEmail(to, title, content, via string) {
+	if strings.ToLower((via)) == "ext" {
+		a := goaxios.GoAxios{
+			Url:    os.Getenv("EXT_MAIL_SERVICE_URL"),
+			Method: "POST",
+			Body: map[string]string{
+				"to":      to,
+				"subject": title,
+				"html":    content,
+			},
+		}
+
+		_, _, d, err := a.RunRest()
+		if err != nil {
+			log.Printf("err: %v", err)
+		}
+
+		log.Println(d)
+		return
+	}
+
 	senderAddr := os.Getenv("MAIL_HOST_USERNAME")
 	mailServer := mail.NewSMTPClient()
 	mailServer.Host = os.Getenv("MAIL_HOST")

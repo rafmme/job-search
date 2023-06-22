@@ -2,6 +2,7 @@ package util
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/rafmme/job-search/types"
@@ -17,7 +18,16 @@ func RunCronJobs() {
 		sqData := new(types.SearchQueryData)
 		sqData.From = 2
 		searchResult := sqData.CreateJobSearchQuery().Execute().FormatJobList()
-		SendEmail(recipientAddr, searchResult.SearchQuery, searchResult.CreateEmailHTMLString())
+
+		if len(searchResult.Jobs) < 1 {
+			log.Println("Search Result empty!")
+			return
+		}
+
+		SendEmail(
+			recipientAddr, searchResult.SearchQuery,
+			searchResult.CreateEmailHTMLString(), "ext",
+		)
 	})
 
 	c.Start()
