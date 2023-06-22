@@ -47,13 +47,12 @@ func (s *SearchResult) FormatJobList() *SearchResult {
 }
 
 func createHTML(jobData FormatedJob) string {
-	return fmt.Sprintf(`<div>
-    <p>
-      <strong>Job Title:</strong>  %s <br>
-      <strong>Job Desc:</strong>  %s <br>
-      <strong>Job Link:</strong>  <a href="%s">%s</a> <br>
-      <strong>Location:</strong>  %s <br>
-    </p>
+	return fmt.Sprintf(`<div></div><div>
+	</div><div>
+    <p><strong>Job Title:</strong>  %s </p>
+	<p><strong>Job Desc:</strong>  %s </p>
+	<p><strong>Job Link:</strong>  <a href="%s">%s</a> </p>
+    <p><strong>Location:</strong>  %s </p>
   </div>`, jobData.Title, jobData.Description, jobData.Url, jobData.Url, jobData.Location)
 }
 
