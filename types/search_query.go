@@ -86,13 +86,14 @@ func (sqData *SearchQueryData) CreateJobSearchQuery() *SearchQueryData {
 }
 
 func (sqData *SearchQueryData) Execute() *SearchResult {
+	searchQueryString := sqData.GetJobSearchQuery()
 	a := goaxios.GoAxios{
 		Url:    "https://www.googleapis.com/customsearch/v1",
 		Method: "GET",
 		Query: map[string]string{
 			"key": os.Getenv("CSE_KEY"),
 			"cx":  os.Getenv("CX"),
-			"q":   url.QueryEscape(sqData.GetJobSearchQuery()),
+			"q":   url.QueryEscape(searchQueryString),
 		},
 		ResponseStruct: &SearchResult{},
 	}
@@ -102,5 +103,8 @@ func (sqData *SearchQueryData) Execute() *SearchResult {
 		log.Printf("err: %v", err)
 	}
 
-	return d.(*SearchResult)
+	response := d.(*SearchResult)
+	response.SearchQuery = searchQueryString
+
+	return response
 }

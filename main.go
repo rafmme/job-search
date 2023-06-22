@@ -1,16 +1,13 @@
 package main
 
 import (
-	_ "github.com/joho/godotenv"
-	_ "github.com/opensaucerer/barf"
-	_ "github.com/opensaucerer/goaxios"
 	"github.com/rafmme/job-search/api"
+	"github.com/rafmme/job-search/util"
 	_ "github.com/serpapi/google-search-results-golang"
-	_ "github.com/xhit/go-simple-mail/v2"
-	_ "gopkg.in/robfig/cron.v2"
 )
 
 func main() {
 	server := api.CreateServer()
+	util.RunCronJobs()
 	server.Start()
 }

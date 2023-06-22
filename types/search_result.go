@@ -1,5 +1,10 @@
 package types
 
+import (
+	"fmt"
+	"strings"
+)
+
 type Job struct {
 	Title   string `json:"title"`
 	Snippet string `json:"snippet"`
@@ -21,6 +26,7 @@ type SearchResult struct {
 	Jobs              []FormatedJob     `json:"jobs"`
 	SearchInformation map[string]string `json:"searchInformation"`
 	Url               map[string]string `json:"url"`
+	SearchQuery       string            `json:"searchQuery"`
 }
 
 func (s *SearchResult) FormatJobList() *SearchResult {
@@ -38,4 +44,25 @@ func (s *SearchResult) FormatJobList() *SearchResult {
 	s.Jobs = jobs
 	s.Items = nil
 	return s
+}
+
+func createHTML(jobData FormatedJob) string {
+	return fmt.Sprintf(`<div>
+    <p>
+      <strong>Job Title:</strong>  %s <br>
+      <strong>Job Desc:</strong>  %s <br>
+      <strong>Job Link:</strong>  <a href="%s">%s</a> <br>
+      <strong>Location:</strong>  %s <br>
+    </p>
+  </div>`, jobData.Title, jobData.Description, jobData.Url, jobData.Url, jobData.Location)
+}
+
+func (s *SearchResult) CreateEmailHTMLString() (emailHTMLString string) {
+	emailHTMLString = fmt.Sprintf(`<div><h3>%s</h3>`, strings.ToUpper(s.SearchQuery))
+
+	for _, jobData := range s.Jobs {
+		emailHTMLString += createHTML(jobData)
+	}
+
+	return emailHTMLString + `</div>`
 }
