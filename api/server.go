@@ -6,6 +6,7 @@ import (
 
 	"github.com/joho/godotenv"
 	"github.com/opensaucerer/barf"
+	"github.com/rafmme/job-search/util"
 )
 
 type Server struct {
@@ -31,8 +32,8 @@ func (server *Server) Start() {
 
 	if err := barf.Stark(barf.Augment{
 		Port:     server.listenAddr,
-		Logging:  &allow, // enable request logging
-		Recovery: &allow, // enable panic recovery so barf returns a 500 error instead of crashing
+		Logging:  &allow,
+		Recovery: &allow,
 	}); err != nil {
 		barf.Logger().Error(err.Error())
 		os.Exit(1)
@@ -40,6 +41,7 @@ func (server *Server) Start() {
 
 	barf.Get("/", Home)
 	barf.Post("/api/v1/search", SearchJobs)
+	util.SetupTGBot()
 
 	if err := barf.Beck(); err != nil {
 		barf.Logger().Error(err.Error())

@@ -1,15 +1,18 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 
-	"github.com/opensaucerer/barf"
+	"github.com/rafmme/job-search/util"
 )
 
 func Home(w http.ResponseWriter, r *http.Request) {
-	barf.Response(w).Status(http.StatusOK).JSON(barf.Res{
-		Status:  true,
-		Data:    nil,
-		Message: "Job Search API Home",
-	})
+	resultString, _ := util.GetMyJobs()
+
+	w.Header().Add("Content-Type", "text/html")
+	fmt.Fprintln(
+		w,
+		resultString,
+	)
 }

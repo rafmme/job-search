@@ -56,12 +56,20 @@ func createHTML(jobData FormatedJob) string {
   </div>`, jobData.Title, jobData.Description, jobData.Url, jobData.Url, jobData.Location)
 }
 
-func (s *SearchResult) CreateEmailHTMLString() (emailHTMLString string) {
+func createTGMessage(jobData FormatedJob) string {
+	return strings.ReplaceAll(fmt.Sprintf(
+		`%s\n%s\n%s\n\n`,
+		jobData.Title, jobData.Description, jobData.Url,
+	), `\n`, "\n")
+}
+
+func (s *SearchResult) CreateResultString() (emailHTMLString, tgMessageString string) {
 	emailHTMLString = fmt.Sprintf(`<div><h3>%s</h3>`, strings.ToUpper(s.SearchQuery))
 
 	for _, jobData := range s.Jobs {
 		emailHTMLString += createHTML(jobData)
+		tgMessageString += createTGMessage(jobData)
 	}
 
-	return emailHTMLString + `</div>`
+	return emailHTMLString + `</div>`, tgMessageString
 }

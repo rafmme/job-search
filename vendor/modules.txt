@@ -1,4 +1,44 @@
+# github.com/go-telegram-bot-api/telegram-bot-api/v5 v5.5.1
+## explicit; go 1.16
+github.com/go-telegram-bot-api/telegram-bot-api/v5
+# github.com/go-telegram/bot v0.7.13
+## explicit; go 1.18
+github.com/go-telegram/bot
+github.com/go-telegram/bot/models
+# github.com/go-test/deep v1.1.0
+## explicit; go 1.16
+# github.com/joho/godotenv v1.5.1
+## explicit; go 1.12
+github.com/joho/godotenv
+# github.com/opensaucerer/barf v1.0.4
+## explicit; go 1.18
+github.com/opensaucerer/barf
+github.com/opensaucerer/barf/constant
+github.com/opensaucerer/barf/cors
+github.com/opensaucerer/barf/env
+github.com/opensaucerer/barf/helper
+github.com/opensaucerer/barf/log
+github.com/opensaucerer/barf/router
+github.com/opensaucerer/barf/router/body
+github.com/opensaucerer/barf/router/form
+github.com/opensaucerer/barf/router/param
+github.com/opensaucerer/barf/router/query
+github.com/opensaucerer/barf/server
+github.com/opensaucerer/barf/typing
+# github.com/opensaucerer/goaxios v0.0.5
+## explicit; go 1.18
+github.com/opensaucerer/goaxios
+# github.com/serpapi/google-search-results-golang v0.0.0-20230616000151-95707d993dc6
+## explicit; go 1.17
+github.com/serpapi/google-search-results-golang
+# github.com/stretchr/testify v1.8.4
+## explicit; go 1.20
 # github.com/toorop/go-dkim v0.0.0-20201103131630-e1cd1a0a5208
 ## explicit
+github.com/toorop/go-dkim
 # github.com/xhit/go-simple-mail/v2 v2.13.0
 ## explicit; go 1.13
+github.com/xhit/go-simple-mail/v2
+# gopkg.in/robfig/cron.v2 v2.0.0-20150107220207-be2e0b0deed5
+## explicit
+gopkg.in/robfig/cron.v2

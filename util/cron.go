@@ -4,84 +4,42 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 
-	"github.com/rafmme/job-search/types"
 	"gopkg.in/robfig/cron.v2"
 )
 
 func RunCronJobs() {
 	recipientAddr := os.Getenv("RCV_ADDR")
+	tgRecipientUserId, err := strconv.ParseInt(os.Getenv("TG_ID"), 10, 64)
+
+	if err != nil {
+		log.Printf("Invalid Recipient Telegram ID: %v", err)
+	}
+
 	c := cron.New()
+	c.AddFunc("@every 8h10m", func() {
+		fmt.Println("For All Jobs")
+		var emailContent string
+		var tgMessageList []string
 
-	c.AddFunc("@every 6h", func() {
-		fmt.Println("For NodeJS jobs")
-		sqData := new(types.SearchQueryData)
-		sqData.From = 2
-		searchResult := sqData.CreateJobSearchQuery().Execute().FormatJobList()
+		emailContent, tgMessageList = GetMyJobs()
 
-		if len(searchResult.Jobs) < 1 {
-			log.Println("Search Result empty!")
-			return
+		for len(tgMessageList) < 1 {
+			emailContent, tgMessageList = GetMyJobs()
 		}
 
-		SendEmail(
-			recipientAddr, searchResult.SearchQuery,
-			searchResult.CreateEmailHTMLString(), "ext",
-		)
-	})
+		if len(tgMessageList) > 0 {
+			for _, tgMsg := range tgMessageList {
+				SendTGBotMessage(tgMsg, tgRecipientUserId)
+			}
 
-	c.AddFunc("@every 6h", func() {
-		fmt.Println("For JavaScript jobs")
-		sqData := new(types.SearchQueryData)
-		sqData.From = 2
-		sqData.Include = []string{"javascript"}
-		searchResult := sqData.CreateJobSearchQuery().Execute().FormatJobList()
-
-		if len(searchResult.Jobs) < 1 {
-			log.Println("Search Result empty!")
-			return
+			SendEmail(
+				recipientAddr, "Posted Jobs List",
+				emailContent, "ext",
+			)
 		}
 
-		SendEmail(
-			recipientAddr, searchResult.SearchQuery,
-			searchResult.CreateEmailHTMLString(), "ext",
-		)
-	})
-
-	c.AddFunc("@every 8h", func() {
-		fmt.Println("For Go jobs")
-		sqData := new(types.SearchQueryData)
-		sqData.From = 2
-		sqData.Include = []string{"golang", "go"}
-		searchResult := sqData.CreateJobSearchQuery().Execute().FormatJobList()
-
-		if len(searchResult.Jobs) < 1 {
-			log.Println("Search Result empty!")
-			return
-		}
-
-		SendEmail(
-			recipientAddr, searchResult.SearchQuery,
-			searchResult.CreateEmailHTMLString(), "ext",
-		)
-	})
-
-	c.AddFunc("@every 8h", func() {
-		fmt.Println("For Rust jobs")
-		sqData := new(types.SearchQueryData)
-		sqData.From = 2
-		sqData.Include = []string{"rust"}
-		searchResult := sqData.CreateJobSearchQuery().Execute().FormatJobList()
-
-		if len(searchResult.Jobs) < 1 {
-			log.Println("Search Result empty!")
-			return
-		}
-
-		SendEmail(
-			recipientAddr, searchResult.SearchQuery,
-			searchResult.CreateEmailHTMLString(), "ext",
-		)
 	})
 
 	c.Start()
