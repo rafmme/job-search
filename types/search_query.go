@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/opensaucerer/goaxios"
+	search "github.com/serpapi/google-search-results-golang"
 )
 
 type SearchQueryData struct {
@@ -85,26 +86,63 @@ func (sqData *SearchQueryData) CreateJobSearchQuery() *SearchQueryData {
 	return sqData
 }
 
-func (sqData *SearchQueryData) Execute() *SearchResult {
-	searchQueryString := sqData.GetJobSearchQuery()
-	a := goaxios.GoAxios{
-		Url:    "https://www.googleapis.com/customsearch/v1",
-		Method: "GET",
-		Query: map[string]string{
-			"key": os.Getenv("CSE_KEY"),
-			"cx":  os.Getenv("CX"),
-			"q":   url.QueryEscape(searchQueryString),
-		},
-		ResponseStruct: &SearchResult{},
+func (sqData *SearchQueryData) Execute(mode string) *SearchResult {
+	if strings.ToLower(mode) == "g-cse" {
+		searchQueryString := sqData.GetJobSearchQuery()
+		a := goaxios.GoAxios{
+			Url:    "https://www.googleapis.com/customsearch/v1",
+			Method: "GET",
+			Query: map[string]string{
+				"key": os.Getenv("CSE_KEY"),
+				"cx":  os.Getenv("CX"),
+				"q":   url.QueryEscape(searchQueryString),
+			},
+			ResponseStruct: &SearchResult{},
+		}
+
+		_, _, d, err := a.RunRest()
+		if err != nil {
+			log.Printf("err: %v", err)
+		}
+
+		response := d.(*SearchResult)
+		response.SearchQuery = searchQueryString
+
+		return response
 	}
 
-	_, _, d, err := a.RunRest()
+	searchQueryString := sqData.GetJobSearchQuery()
+	parameter := map[string]string{
+		"q":             searchQueryString,
+		"hl":            "en",
+		"gl":            "br",
+		"google_domain": "google.com",
+		"num":           "100",
+		"output":        "json",
+	}
+
+	search := search.NewGoogleSearch(parameter, os.Getenv("SERAPI_KEY"))
+	result, err := search.GetJSON()
+
 	if err != nil {
 		log.Printf("err: %v", err)
+		return nil
 	}
 
-	response := d.(*SearchResult)
-	response.SearchQuery = searchQueryString
+	jobsList := []FormatedJob{}
 
-	return response
+	for _, data := range result["organic_results"].([]interface{}) {
+		jobData := data.(map[string]interface{})
+		jobsList = append(jobsList, FormatedJob{
+			Url:         jobData["link"].(string),
+			Description: jobData["snippet"].(string),
+			Title:       jobData["title"].(string),
+		})
+	}
+
+	searchResult := new(SearchResult)
+	searchResult.SearchQuery = searchQueryString
+	searchResult.Jobs = jobsList
+
+	return searchResult
 }

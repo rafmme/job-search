@@ -23,10 +23,10 @@ func RunCronJobs() {
 		var emailContent string
 		var tgMessageList []string
 
-		emailContent, tgMessageList = GetMyJobs()
+		emailContent, tgMessageList = GetMyJobs("ser-api")
 
 		for len(tgMessageList) < 1 {
-			emailContent, tgMessageList = GetMyJobs()
+			emailContent, tgMessageList = GetMyJobs("ser-api")
 		}
 
 		if len(tgMessageList) > 0 {

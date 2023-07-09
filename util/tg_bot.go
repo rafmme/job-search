@@ -3,6 +3,7 @@ package util
 import (
 	"log"
 	"os"
+	"strconv"
 	"strings"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
@@ -34,7 +35,18 @@ func SetupTGBot() {
 		}
 
 		if strings.ToLower(update.Message.Text) == "jobs" || strings.ToLower(update.Message.Text) == "/jobs" {
-			_, tgMessageList := GetMyJobs()
+			var tgMessageList []string
+			myTGId, err := strconv.ParseInt(os.Getenv("TG_ID"), 10, 64)
+
+			if err != nil {
+				log.Printf("Invalid Recipient Telegram ID: %v", err)
+			}
+
+			if update.Message.Chat.ID == myTGId {
+				_, tgMessageList = GetMyJobs("ser-api")
+			} else {
+				_, tgMessageList = GetMyJobs("g-cse")
+			}
 
 			for _, tgMsg := range tgMessageList {
 				ReplyTGBotMessage(
