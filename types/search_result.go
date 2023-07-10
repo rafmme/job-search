@@ -33,12 +33,17 @@ func (s *SearchResult) FormatJobList() *SearchResult {
 	jobs := []FormatedJob{}
 
 	for _, job := range s.Items {
-		jobs = append(jobs, FormatedJob{
-			Title:       job.Title,
-			Description: job.Snippet,
-			Url:         job.Link,
-			Location:    job.Pagemap.Metatags[0]["og:description"],
-		})
+		jobUrl := strings.ToLower(job.Link)
+
+		if !strings.Contains(jobUrl, "linkedin.com") ||
+			strings.Contains(jobUrl, "linkedin.com/jobs") {
+			jobs = append(jobs, FormatedJob{
+				Title:       job.Title,
+				Description: job.Snippet,
+				Url:         jobUrl,
+				Location:    job.Pagemap.Metatags[0]["og:description"],
+			})
+		}
 	}
 
 	s.Jobs = jobs
@@ -68,6 +73,8 @@ func (s *SearchResult) CreateResultString() (emailHTMLString, tgMessageString st
 
 	for _, jobData := range s.Jobs {
 		emailHTMLString += createHTML(jobData)
+
+		// Implement sending many results with Ser API here
 		tgMessageString += createTGMessage(jobData)
 	}
 

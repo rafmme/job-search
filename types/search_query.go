@@ -115,7 +115,7 @@ func (sqData *SearchQueryData) Execute(mode string) *SearchResult {
 	parameter := map[string]string{
 		"q":             searchQueryString,
 		"hl":            "en",
-		"gl":            "br",
+		"gl":            "za",
 		"google_domain": "google.com",
 		"num":           "100",
 		"output":        "json",
@@ -133,11 +133,16 @@ func (sqData *SearchQueryData) Execute(mode string) *SearchResult {
 
 	for _, data := range result["organic_results"].([]interface{}) {
 		jobData := data.(map[string]interface{})
-		jobsList = append(jobsList, FormatedJob{
-			Url:         jobData["link"].(string),
-			Description: jobData["snippet"].(string),
-			Title:       jobData["title"].(string),
-		})
+		jobUrl := strings.ToLower(jobData["link"].(string))
+
+		if !strings.Contains(jobUrl, "linkedin.com") ||
+			strings.Contains(jobUrl, "linkedin.com/jobs") {
+			jobsList = append(jobsList, FormatedJob{
+				Url:         jobUrl,
+				Description: jobData["snippet"].(string),
+				Title:       jobData["title"].(string),
+			})
+		}
 	}
 
 	searchResult := new(SearchResult)
