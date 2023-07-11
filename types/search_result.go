@@ -35,15 +35,19 @@ func (s *SearchResult) FormatJobList() *SearchResult {
 	for _, job := range s.Items {
 		jobUrl := strings.ToLower(job.Link)
 
-		if !strings.Contains(jobUrl, "linkedin.com") ||
-			strings.Contains(jobUrl, "linkedin.com/jobs") {
-			jobs = append(jobs, FormatedJob{
-				Title:       job.Title,
-				Description: job.Snippet,
-				Url:         jobUrl,
-				Location:    job.Pagemap.Metatags[0]["og:description"],
-			})
+		if strings.Contains(jobUrl, "linkedin.com") &&
+			!strings.Contains(jobUrl, "linkedin.com/jobs") ||
+			strings.Contains(jobUrl, "indeed.com") &&
+				!strings.Contains(jobUrl, "indeed.com/viewjob") {
+			continue
 		}
+
+		jobs = append(jobs, FormatedJob{
+			Title:       job.Title,
+			Description: job.Snippet,
+			Url:         jobUrl,
+			Location:    job.Pagemap.Metatags[0]["og:description"],
+		})
 	}
 
 	s.Jobs = jobs
@@ -68,15 +72,28 @@ func createTGMessage(jobData FormatedJob) string {
 	), `\n`, "\n")
 }
 
-func (s *SearchResult) CreateResultString() (emailHTMLString, tgMessageString string) {
+func (s *SearchResult) CreateResultString() (emailHTMLString string, tgMessageStringList []string) {
 	emailHTMLString = fmt.Sprintf(`<div><h3>%s</h3>`, strings.ToUpper(s.SearchQuery))
+	length := len(s.Jobs)
 
-	for _, jobData := range s.Jobs {
-		emailHTMLString += createHTML(jobData)
+	for i := 0; i < length; i += 10 {
+		end := i + 10
 
-		// Implement sending many results with Ser API here
-		tgMessageString += createTGMessage(jobData)
+		if end > length {
+			end = length
+		}
+
+		emailHTMLString += createHTML(s.Jobs[i])
+
+		tmpSlice := ""
+		for _, jobData := range s.Jobs[i:end] {
+			tmpSlice += createTGMessage(jobData)
+
+		}
+
+		tgMessageStringList = append(tgMessageStringList, tmpSlice)
 	}
 
-	return emailHTMLString + `</div>`, tgMessageString
+	return emailHTMLString, tgMessageStringList
+
 }

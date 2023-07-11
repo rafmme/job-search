@@ -35,7 +35,7 @@ func SetupTGBot() {
 		}
 
 		if strings.ToLower(update.Message.Text) == "jobs" || strings.ToLower(update.Message.Text) == "/jobs" {
-			var tgMessageList []string
+			var tgMessageList [][]string
 			myTGId, err := strconv.ParseInt(os.Getenv("TG_ID"), 10, 64)
 
 			if err != nil {
@@ -49,10 +49,12 @@ func SetupTGBot() {
 			}
 
 			for _, tgMsg := range tgMessageList {
-				ReplyTGBotMessage(
-					tgMsg,
-					update.Message.Chat.ID, update.Message.MessageID,
-				)
+				for _, msg := range tgMsg {
+					ReplyTGBotMessage(
+						msg,
+						update.Message.Chat.ID, update.Message.MessageID,
+					)
+				}
 			}
 
 			return

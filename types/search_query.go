@@ -135,14 +135,19 @@ func (sqData *SearchQueryData) Execute(mode string) *SearchResult {
 		jobData := data.(map[string]interface{})
 		jobUrl := strings.ToLower(jobData["link"].(string))
 
-		if !strings.Contains(jobUrl, "linkedin.com") ||
-			strings.Contains(jobUrl, "linkedin.com/jobs") {
-			jobsList = append(jobsList, FormatedJob{
-				Url:         jobUrl,
-				Description: jobData["snippet"].(string),
-				Title:       jobData["title"].(string),
-			})
+		if strings.Contains(jobUrl, "linkedin.com") &&
+			!strings.Contains(jobUrl, "linkedin.com/jobs") ||
+			strings.Contains(jobUrl, "indeed.com") &&
+				!strings.Contains(jobUrl, "indeed.com/viewjob") {
+			continue
+
 		}
+
+		jobsList = append(jobsList, FormatedJob{
+			Url:         jobUrl,
+			Description: jobData["snippet"].(string),
+			Title:       jobData["title"].(string),
+		})
 	}
 
 	searchResult := new(SearchResult)

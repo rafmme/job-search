@@ -21,7 +21,7 @@ func RunCronJobs() {
 	c.AddFunc("@every 8h10m", func() {
 		fmt.Println("For All Jobs")
 		var emailContent string
-		var tgMessageList []string
+		var tgMessageList [][]string
 
 		emailContent, tgMessageList = GetMyJobs("ser-api")
 
@@ -31,7 +31,9 @@ func RunCronJobs() {
 
 		if len(tgMessageList) > 0 {
 			for _, tgMsg := range tgMessageList {
-				SendTGBotMessage(tgMsg, tgRecipientUserId)
+				for _, msg := range tgMsg {
+					SendTGBotMessage(msg, tgRecipientUserId)
+				}
 			}
 
 			SendEmail(

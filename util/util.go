@@ -6,7 +6,7 @@ import (
 	"github.com/rafmme/job-search/types"
 )
 
-func DoSearch(sites, inc []string, from int, mode string) (string, string) {
+func DoSearch(sites, inc []string, from int, mode string) (string, []string) {
 	var searchResult *types.SearchResult
 	sqData := new(types.SearchQueryData)
 	sqData.JobSites = sites
@@ -22,7 +22,7 @@ func DoSearch(sites, inc []string, from int, mode string) (string, string) {
 	return searchResult.CreateResultString()
 }
 
-func GetMyJobs(mode string) (htmlString string, tgMessageList []string) {
+func GetMyJobs(mode string) (htmlString string, tgMessageList [][]string) {
 	es := []string{}
 	indeed := []string{"indeed.com"}
 	lnkdin := []string{"linkedin.com"}
