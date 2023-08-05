@@ -1,0 +1,177 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Job Search API",
+    "description": "An API for getting list of posted jobs on the internet.",
+    "version": "1.0.0"
+  },
+  "schemes": ["http", "https"],
+  "basePath": "/",
+  "paths": {
+    "/api/v1/search": {
+      "post": {
+        "tags": ["Search Job API Endpoint"],
+        "summary": "Searches for jobs matching the provided keywords.",
+        "operationId": "jobSearchApi",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "job search data",
+            "description": "Job Search Data",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SearchData"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Data",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/": {
+      "get": {
+        "tags": ["Search Job HTML Page"],
+        "summary": "Job Search Home Page",
+        "operationId": "jobSearchPage",
+        "produces": ["text/html"],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Job": {
+      "type": "object",
+      "required": ["title", "description", "url", "location"],
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "location": {
+          "type": "string"
+        }
+      }
+    },
+    "SearchResultData": {
+      "type": "object",
+      "required": ["items", "jobs", "url", "searchQuery"],
+      "properties": {
+        "items": {
+          "type": "object",
+          "nullable": true
+        },
+        "jobs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Job"
+          }
+        },
+        "url": {
+          "type": "object"
+        },
+        "searchQuery": {
+          "type": "string"
+        }
+      }
+    },
+    "SearchData": {
+      "type": "object",
+      "required": ["jobSites", "jobTitles", "ignore", "include", "from"],
+      "properties": {
+        "jobSites": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "jobTitles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "ignore": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "include": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "from": {
+          "type": "number"
+        }
+      }
+    },
+    "ErrorResponse": {
+      "type": "object",
+      "required": ["status", "data", "message"],
+      "properties": {
+        "status": {
+          "type": "boolean"
+        },
+        "data": {
+          "type": "object",
+          "nullable": true
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "Response": {
+      "type": "object",
+      "required": ["status", "data", "message"],
+      "properties": {
+        "status": {
+          "type": "boolean"
+        },
+        "data": {
+          "$ref": "#/definitions/SearchResultData"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

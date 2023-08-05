@@ -1,8 +1,11 @@
 package types
 
 import (
+	"encoding/json"
 	"fmt"
+	"io"
 	"log"
+	"net/http"
 	"net/url"
 	"os"
 	"strings"
@@ -89,6 +92,7 @@ func (sqData *SearchQueryData) CreateJobSearchQuery() *SearchQueryData {
 func (sqData *SearchQueryData) Execute(mode string) *SearchResult {
 	if strings.ToLower(mode) == "g-cse" {
 		searchQueryString := sqData.GetJobSearchQuery()
+
 		a := goaxios.GoAxios{
 			Url:    "https://www.googleapis.com/customsearch/v1",
 			Method: "GET",
@@ -101,13 +105,42 @@ func (sqData *SearchQueryData) Execute(mode string) *SearchResult {
 		}
 
 		_, _, d, err := a.RunRest()
+
 		if err != nil {
-			log.Printf("err: %v", err)
+			var result SearchResult
+			searchUrl := fmt.Sprintf(
+				"https://www.googleapis.com/customsearch/v1?cx=%v&key=%v&q=%v",
+				os.Getenv("CX"),
+				os.Getenv("CSE_KEY"),
+				url.QueryEscape(searchQueryString),
+			)
+
+			resp, err := http.Get(searchUrl)
+			if err != nil {
+				log.Printf("err: %v", err)
+				return new(SearchResult)
+			}
+
+			defer resp.Body.Close()
+			body, err := io.ReadAll(resp.Body)
+
+			if err := json.Unmarshal(body, &result); err != nil {
+				log.Printf("err: %v", err)
+				return new(SearchResult)
+			}
+
+			if err != nil {
+				log.Printf("err: %v", err)
+				return new(SearchResult)
+			}
+
+			response := &result
+			response.SearchQuery = searchQueryString
+			return response
 		}
 
 		response := d.(*SearchResult)
 		response.SearchQuery = searchQueryString
-
 		return response
 	}
 
@@ -126,7 +159,7 @@ func (sqData *SearchQueryData) Execute(mode string) *SearchResult {
 
 	if err != nil {
 		log.Printf("err: %v", err)
-		return nil
+		return new(SearchResult)
 	}
 
 	jobsList := []FormatedJob{}

@@ -1,16 +1,27 @@
 package api
 
 import (
+	"fmt"
 	"log"
+	"net/http"
 	"os"
+	"time"
 
 	"github.com/joho/godotenv"
 	"github.com/opensaucerer/barf"
-	"github.com/rafmme/job-search/util"
 )
 
 type Server struct {
 	listenAddr string
+}
+
+func requestLoggerMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		startTime := time.Now()
+		next.ServeHTTP(w, r)
+		duration := time.Since(startTime)
+		log.Printf("%s %s - %v", r.Method, r.URL.Path, duration)
+	})
 }
 
 func CreateServer() *Server {
@@ -28,23 +39,22 @@ func CreateServer() *Server {
 }
 
 func (server *Server) Start() {
-	allow := true
+	mux := http.NewServeMux()
 
-	if err := barf.Stark(barf.Augment{
-		Port:     server.listenAddr,
-		Logging:  &allow,
-		Recovery: &allow,
-	}); err != nil {
-		barf.Logger().Error(err.Error())
-		os.Exit(1)
-	}
+	mux.Handle("/swagger/", http.StripPrefix("/swagger/", http.FileServer(http.Dir("./swagger-ui"))))
+	mux.HandleFunc("/docs", SwaggerAPIDocHandler)
+	mux.HandleFunc("/", Home)
+	mux.HandleFunc("/api/v1/search", SearchJobs)
 
-	barf.Get("/", Home)
-	barf.Post("/api/v1/search", SearchJobs)
-	util.SetupTGBot()
+	//util.SetupTGBot()
 
-	if err := barf.Beck(); err != nil {
-		barf.Logger().Error(err.Error())
+	loggedMux := requestLoggerMiddleware(mux)
+	port := fmt.Sprintf(":%s", server.listenAddr)
+	barf.Logger().Info(fmt.Sprintf("🆙 Server up on PORT %s", port))
+	err := http.ListenAndServe(port, loggedMux)
+
+	if err != nil {
+		barf.Logger().Error("Could'nt start the server. " + err.Error())
 		os.Exit(1)
 	}
 }

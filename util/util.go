@@ -17,6 +17,10 @@ func DoSearch(sites, inc []string, from int, mode string) (string, []string) {
 		searchResult = sqData.CreateJobSearchQuery().Execute("g-cse").FormatJobList()
 	} else {
 		searchResult = sqData.CreateJobSearchQuery().Execute("ser-api")
+
+		if len(searchResult.Jobs) < 1 {
+			searchResult = sqData.CreateJobSearchQuery().Execute("g-cse").FormatJobList()
+		}
 	}
 
 	return searchResult.CreateResultString()

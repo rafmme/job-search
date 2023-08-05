@@ -22,11 +22,10 @@ type FormatedJob struct {
 }
 
 type SearchResult struct {
-	Items             []Job             `json:"items"`
-	Jobs              []FormatedJob     `json:"jobs"`
-	SearchInformation map[string]string `json:"searchInformation"`
-	Url               map[string]string `json:"url"`
-	SearchQuery       string            `json:"searchQuery"`
+	Items       []Job             `json:"items"`
+	Jobs        []FormatedJob     `json:"jobs"`
+	Url         map[string]string `json:"url"`
+	SearchQuery string            `json:"searchQuery"`
 }
 
 func (s *SearchResult) FormatJobList() *SearchResult {
