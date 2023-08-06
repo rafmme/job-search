@@ -48,15 +48,37 @@
         }
       }
     },
-    "/": {
+    "/jobs": {
       "get": {
-        "tags": ["Search Job HTML Page"],
-        "summary": "Job Search Home Page",
-        "operationId": "jobSearchPage",
+        "tags": ["Get Jobs HTML Page"],
+        "summary": "Jobs List Page",
+        "operationId": "jobsListPage",
         "produces": ["text/html"],
         "responses": {
           "200": {
             "description": "Successful operation"
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/": {
+      "get": {
+        "tags": ["Home Page"],
+        "summary": "Home Page",
+        "operationId": "homePage",
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
           },
           "500": {
             "description": "Internal Server Error",

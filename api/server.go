@@ -43,6 +43,7 @@ func (server *Server) Start() {
 
 	mux.Handle("/swagger/", http.StripPrefix("/swagger/", http.FileServer(http.Dir("./swagger-ui"))))
 	mux.HandleFunc("/docs", SwaggerAPIDocHandler)
+	mux.HandleFunc("/jobs", FetchJobs)
 	mux.HandleFunc("/", Home)
 	mux.HandleFunc("/api/v1/search", SearchJobs)
 
