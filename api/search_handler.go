@@ -2,6 +2,7 @@ package api
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/opensaucerer/barf"
 	"github.com/rafmme/job-search/types"
@@ -9,6 +10,7 @@ import (
 
 func SearchJobs(w http.ResponseWriter, r *http.Request) {
 	var data types.SearchQueryData
+	var result *types.SearchResult
 
 	err := barf.Request(r).Body().Format(&data)
 
@@ -21,7 +23,11 @@ func SearchJobs(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result := data.CreateJobSearchQuery().Execute(data.Mode).FormatJobList()
+	if strings.ToLower(data.Mode) == "g-cse" {
+		result = data.CreateJobSearchQuery().Execute(data.Mode).FormatJobList()
+	} else {
+		result = data.CreateJobSearchQuery().Execute(data.Mode)
+	}
 
 	barf.Response(w).Status(http.StatusOK).JSON(barf.Res{
 		Status:  true,

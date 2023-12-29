@@ -146,17 +146,27 @@ func (sqData *SearchQueryData) Execute(mode string) *SearchResult {
 	}
 
 	searchQueryString := sqData.GetJobSearchQuery()
-	parameter := map[string]string{
-		"q":             searchQueryString,
-		"hl":            "en",
-		"gl":            "za",
-		"google_domain": "google.com",
-		"num":           "100",
-		"output":        "json",
+
+	var result search.SearchResult
+	searchUrl := fmt.Sprintf(
+		"https://serpapi.com/search.json?engine=google&num=100&q=%v&api_key=%v",
+		url.QueryEscape(searchQueryString),
+		os.Getenv("SERAPI_KEY"),
+	)
+
+	resp, err := http.Get(searchUrl)
+	if err != nil {
+		log.Printf("err: %v", err)
+		return new(SearchResult)
 	}
 
-	search := search.NewGoogleSearch(parameter, os.Getenv("SERAPI_KEY"))
-	result, err := search.GetJSON()
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
+
+	if err := json.Unmarshal(body, &result); err != nil {
+		log.Printf("err: %v", err)
+		return new(SearchResult)
+	}
 
 	if err != nil {
 		log.Printf("err: %v", err)

@@ -4,6 +4,8 @@ const textEl = document.getElementById("stat-text");
 const searchBtnEl = document.getElementById("search-button");
 const jobsListEl = document.getElementById("jobs-list");
 
+let jobsData = [];
+
 const fetchJobs = async (i) => {
   try {
     const baseUrl = "https://www.arbeitnow.com/api/job-board-api";
@@ -53,6 +55,8 @@ const getArbeitnowJobsPosting = async (keywords, apiDataLength) => {
 
 document.getElementById("close").addEventListener("click", (evt) => {
   evt.preventDefault();
+  jobsData = [];
+
   document.getElementById("search").classList.remove("hide");
   document.getElementById("modal").classList.add("hide");
 });
@@ -61,7 +65,7 @@ searchBtnEl.addEventListener("click", async (evt) => {
   evt.preventDefault();
 
   searchBtnEl.innerHTML =
-  '<i class="fa fa-spinner fa-spin"></i> Searching for jobs...';
+    '<i class="fa fa-spinner fa-spin"></i> Searching for jobs...';
 
   const keywords = jobSearchKeywordEl.value;
   let apiDataLength = Number.parseInt(apiDataLengthEl.value, 10);
@@ -70,7 +74,7 @@ searchBtnEl.addEventListener("click", async (evt) => {
     apiDataLength = 2;
   }
 
-  const jobsData = await getArbeitnowJobsPosting(
+  jobsData = await getArbeitnowJobsPosting(
     keywords.toLowerCase(),
     apiDataLength
   );
@@ -81,9 +85,9 @@ searchBtnEl.addEventListener("click", async (evt) => {
     searchBtnEl.innerHTML = '<i class="fa fa-clipboard"></i> Search';
 
     setTimeout(() => {
-        textEl.innerText = "";
-        textEl.classList.add("hide");
-      }, 5000);
+      textEl.innerText = "";
+      textEl.classList.add("hide");
+    }, 5000);
 
     for (let index = 0; index < jobsData.length; index += 1) {
       const {
@@ -95,7 +99,7 @@ searchBtnEl.addEventListener("click", async (evt) => {
         created_at,
         company_name,
         remote,
-        job_types
+        job_types,
       } = jobsData[index];
 
       jobsListEl.innerHTML += `<div class="col-md-4" id="dv-${index}">

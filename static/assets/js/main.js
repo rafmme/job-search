@@ -10,7 +10,7 @@ const seTypeEl = document.getElementById("mode");
 
 fromEl.setAttribute("max", new Date().toISOString().split("T")[0]);
 
-let jobsData;
+let jobsData = [];
 
 const calculateDateDayValue = (date) => {
   const aDayInMilliSecs = 86400000;
@@ -97,6 +97,9 @@ const searchForJobs = async (reqBody) => {
 
 document.getElementById("close").addEventListener("click", (evt) => {
   evt.preventDefault();
+
+  jobsData = [];
+
   document.getElementById("search").classList.remove("hide");
   document.getElementById("modal").classList.add("hide");
 });
