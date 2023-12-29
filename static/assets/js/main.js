@@ -102,6 +102,8 @@ document.getElementById("close").addEventListener("click", (evt) => {
 
   document.getElementById("search").classList.remove("hide");
   document.getElementById("modal").classList.add("hide");
+
+  jobsListEl.innerHTML = "";
 });
 
 searchBtnEl.addEventListener("click", async (evt) => {
