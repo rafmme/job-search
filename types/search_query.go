@@ -21,6 +21,7 @@ type SearchQueryData struct {
 	Ignore         []string `json:"ignore"`
 	Include        []string `json:"include"`
 	From           int      `json:"from"`
+	Mode           string   `json:"mode"`
 	jobSearchQuery string
 }
 

@@ -21,7 +21,7 @@ func SearchJobs(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result := data.CreateJobSearchQuery().Execute("g-cse").FormatJobList()
+	result := data.CreateJobSearchQuery().Execute(data.Mode).FormatJobList()
 
 	barf.Response(w).Status(http.StatusOK).JSON(barf.Res{
 		Status:  true,

@@ -8,7 +8,7 @@ import (
 )
 
 func FetchJobs(w http.ResponseWriter, r *http.Request) {
-	resultString, _ := util.GetMyJobs("ser-api")
+	resultString, _ := util.GetMyJobs("g-cse")
 
 	w.Header().Add("Content-Type", "text/html")
 	fmt.Fprintln(
