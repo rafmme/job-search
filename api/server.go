@@ -39,12 +39,14 @@ func CreateServer() *Server {
 }
 
 func (server *Server) Start() {
+	fs := http.FileServer(http.Dir("static"))
 	mux := http.NewServeMux()
+
+	mux.Handle("/", fs)
 
 	mux.Handle("/swagger/", http.StripPrefix("/swagger/", http.FileServer(http.Dir("./swagger-ui"))))
 	mux.HandleFunc("/docs", SwaggerAPIDocHandler)
 	mux.HandleFunc("/jobs", FetchJobs)
-	mux.HandleFunc("/", Home)
 	mux.HandleFunc("/api/v1/search", SearchJobs)
 
 	//util.SetupTGBot()
