@@ -108,21 +108,17 @@ searchBtnEl.addEventListener("click", async (evt) => {
       <div class="card pd">
         <h4>${title}</h4>
   
-        <p>
-          ${description}
-        </p>
-
         <p><b>Company:</b> ${company_name}</p>
 
         <p><b>Location:</b> ${location}</p>
     
         <p><b>Remote:</b> ${remote}</p>
 
-        <p><b>Posted At:</b> ${new Date(created_at * 1000)}</p>
-
         <p><b>Job Types:</b> ${job_types.join(",")}</p>
 
         <p><b>Tags:</b> ${tags}</p>
+
+        <p><b>Posted At:</b> ${new Date(created_at * 1000)}</p>
   
         <a
           href="${url}" id="a-${index}"><b>${url}</b></a
